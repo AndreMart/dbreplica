@@ -1,0 +1,63 @@
+- hosts: web-server
+  remote_user: ubuntu
+  become: true
+  gather_facts: no
+
+
+  tasks:
+    - name: Update all packages
+      apt:
+        update_cache: yes
+        name: "*"
+        state: latest
+
+    - name: Install dependencies
+      apt:
+        pkg:
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - python3-pip
+          - git
+   
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Install Docker
+      ansible.builtin.apt:
+        name:
+          - docker
+          - docker-compose
+        state: latest
+        update_cache: true
+
+    - name: Install Docker Module for Python
+      pip:
+        name: docker
+
+    - name: Start flask-app
+      docker_container:
+        name: flask-app
+        image: andremart/flaskapp:9ce21d9
+        command: ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
+        state: started
+        restart: yes
+        ports:
+        - "5000:5000"
+        env:
+            FLASK_APP="api.py"
+            FLASK_ENVIRONMENT="development"
+            DB_USERNAME="devops"
+            DB_PASSWORD="devops"
+            DB_HOSTNAME=172.31.15.48
+            DB_NAME="student"
+          
+        

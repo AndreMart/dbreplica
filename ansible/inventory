@@ -1,0 +1,12 @@
+web-server ansible_host=3.67.221.100 private_ip=172.31.12.162
+
+[db_servers]
+dbmaster ansible_host=3.67.44.135 private_ip=172.31.15.48 server_id=101
+dbreplica ansible_host=3.65.15.222 private_ip=172.31.3.58 server_id=102
+
+##dbmaster_private_ip = "172.31.15.48"
+##dbmaster_public_ip = "3.67.44.135"
+##dbreplica_private_ip = "172.31.3.58"
+##dbreplica_public_ip = "3.65.15.222"
+##web_server_private_ip = "172.31.12.162"
+##web_server_public_ip = "3.67.221.100"

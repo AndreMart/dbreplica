@@ -1,0 +1,27 @@
+- hosts: dbmaster
+  remote_user: ubuntu
+  become: true
+  gather_facts: yes
+  vars_files:
+    - vars/secrets
+  tasks:
+    - name: mysql master setup for replication
+      mysql_user:
+        name: replica
+        host: "172.31.%.%"
+        password: "{{ mysql_root_password }}"
+        login_user: root
+        login_password: ""
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        check_implicit_admin: yes
+        priv: "*.*:REPLICATION SLAVE"
+
+    - name: check master status
+      mysql_replication:
+        mode: getmaster
+        login_user: root
+        login_password: ""
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+#
+#    - name: create a new database  
+#      mysql_db: name=student state=present login_user=root login_password="{{ mysql_root_password }}"  
